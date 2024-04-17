@@ -2,6 +2,7 @@
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { gql, useMutation, useQuery } from '@apollo/client';
 
 // 최상단에 위치하는 네브바 컴포넌트
 function Navbars() {
@@ -95,19 +96,75 @@ function Account() {
   );
 }
 
-function Account2() {
-  let [email, setEmail] = useState('');
-  let [password, setPassword] = useState('');
-  let [name, setName] = useState('');
-  let [phonenumber, setPhonenumber] = useState('');
-  let [gender, setGender] = useState('');
-  let [birth, setBirth] = useState('');
-  let [ci, setCi] = useState('test');
-  let [actor, setActor] = useState('');
-  let [terms, setTerms] = useState('DEFAULT (NOT UPDATE)');
-  let [created, setCreated] = useState([]);
+const CREATE_USER = gql`
+  mutation Mutation($input: auth_SignUpInputV2) {
+    auth_signUpV2(input: $input)
+  }
+`;
 
-  let newAccount = {
+// const GET_USER = gql`
+//   query Auth_user($input: auth_UserInput) {
+//     auth_user(input: $input) {
+//       id
+//     }
+//   }
+// `;
+
+function Account2() {
+  const [createUser] = useMutation(CREATE_USER);
+  // const [getUser] = useQuery(GET_USER);
+
+  const submit = async () => {
+    try {
+      let result = await createUser({
+        variables: {
+          input: {
+            email: 'louis_0403@seoltab.test',
+            password: 'asdfasdf',
+            name: '루이루이',
+            phoneNumber: '01000000000',
+            gender: 'MAN',
+            birthDate: '19881231',
+            ci: 'test',
+            actor: 'STUDENT',
+            terms: [
+              'MARKETING_COLLECT',
+              'PRIVATE_ETC_COLLECT',
+              'TERMS_OF_SERVICE',
+              'PRIVATE_COLLECT',
+            ],
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const getget = async () => {
+  //   try {
+  //     let result = await getUser({
+  //       input: {
+  //         id: 1,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phonenumber, setPhonenumber] = useState('');
+  const [gender, setGender] = useState('');
+  const [birth, setBirth] = useState('');
+  const [ci, setCi] = useState('test');
+  const [actor, setActor] = useState('');
+  const [terms, setTerms] = useState('DEFAULT (NOT UPDATE)');
+  const [created, setCreated] = useState([]);
+
+  const newAccount = {
     email: `${email}`,
     password: password,
     name: name,
@@ -273,21 +330,8 @@ function Account2() {
           })
         : null}
       <div>
-        <button
-          onClick={async () => {
-            const response = await fetch('http://localhost:3000/api/graphql', {
-              method: 'POST',
-              headers: {
-                'Content-type': 'applocation/json',
-              },
-              body: JSON.stringify({ query: '{ users { name } }' }),
-            });
-            const json = await response.json();
-            console.log(json);
-          }}
-        >
-          통신버튼
-        </button>
+        <button onClick={() => submit()}>통신버튼</button>
+        <button onClick={() => getget()}>유저조회</button>
       </div>
     </div>
   );
