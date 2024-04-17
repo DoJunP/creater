@@ -107,20 +107,17 @@ function Account2() {
   let [terms, setTerms] = useState('DEFAULT (NOT UPDATE)');
   let [created, setCreated] = useState([]);
 
-  let newAccount = [
-    {
-      email: `${email}`,
-      password: `${password}`,
-      name: `${name}`,
-      phonenumber: `${phonenumber}`,
-      gender: `${gender}`,
-      birth: `${birth}`,
-      ci: `${ci}`,
-      actor: `${actor}`,
-      terms: `${terms}`,
-    },
-  ];
-
+  let newAccount = {
+    email: `${email}`,
+    password: password,
+    name: name,
+    phonenumber: phonenumber,
+    gender: gender,
+    birth: birth,
+    ci: ci,
+    actor: actor,
+    terms: terms,
+  };
   let [list, setList] = useState(false);
 
   return (
@@ -260,10 +257,11 @@ function Account2() {
           onClick={() => {
             let copy = [...created];
             copy.push(newAccount);
-            console.log(created);
-            alert('gkd');
+
+            alert('계정 생성 완료');
             setCreated(copy);
             setList(true);
+            console.log(created);
           }}
         >
           계정생성
@@ -271,9 +269,26 @@ function Account2() {
       </div>
       {list == true
         ? created.map((a, i) => {
-            return <div>{`${newAccount[i].email}이 생성되었습니다`}</div>;
+            return <div>{`${a.email}이 생성되었습니다`}</div>;
           })
         : null}
+      <div>
+        <button
+          onClick={async () => {
+            const response = await fetch('http://localhost:3000/api/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-type': 'applocation/json',
+              },
+              body: JSON.stringify({ query: '{ users { name } }' }),
+            });
+            const json = await response.json();
+            console.log(json);
+          }}
+        >
+          통신버튼
+        </button>
+      </div>
     </div>
   );
 }
