@@ -1,7 +1,7 @@
-"use client";
-import { Container, Nav, Navbar } from "react-bootstrap";
-import React, { useState, useRef } from "react";
-import axios from "axios";
+'use client';
+import { Container, Nav, Navbar } from 'react-bootstrap';
+import React, { useState, useRef } from 'react';
+import axios from 'axios';
 
 // 최상단에 위치하는 네브바 컴포넌트
 function Navbars() {
@@ -22,7 +22,7 @@ function Navbars() {
 function Account() {
   return (
     <form action="/api/post/create" method="POST">
-      <div style={{ margin: "5px" }}>
+      <div style={{ margin: '5px' }}>
         <h4>계정생성</h4>
         <div className="input-box">
           <label for="email">Email</label>
@@ -50,7 +50,7 @@ function Account() {
           <div>
             <span>남자</span>
             <input name="gender" type="radio" value="male" />
-            <span style={{ marginLeft: "10px" }}>여자</span>
+            <span style={{ marginLeft: '10px' }}>여자</span>
             <input name="gender" type="radio" value="female" />
           </div>
         </div>
@@ -58,7 +58,7 @@ function Account() {
           <label for="birth">생년월일</label>
           <input type="number" name="birth" placeholder="YYYYMMDD"></input>
         </div>
-        <div className="input-box" style={{ display: "none" }}>
+        <div className="input-box" style={{ display: 'none' }}>
           <label for="ci">ci</label>
           <input
             type="text"
@@ -72,11 +72,11 @@ function Account() {
           <div>
             <span>Student</span>
             <input name="actor" type="radio" value="student" />
-            <span style={{ marginLeft: "10px" }}>Teacher</span>
+            <span style={{ marginLeft: '10px' }}>Teacher</span>
             <input name="actor" type="radio" value="teacher" />
           </div>
         </div>
-        <div className="input-box" style={{ display: "none" }}>
+        <div className="input-box" style={{ display: 'none' }}>
           <label for="terms">terms</label>
           <input
             type="text"
@@ -96,12 +96,35 @@ function Account() {
 }
 
 function Account2() {
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
+  let [name, setName] = useState('');
+  let [phonenumber, setPhonenumber] = useState('');
+  let [gender, setGender] = useState('');
+  let [birth, setBirth] = useState('');
+  let [ci, setCi] = useState('test');
+  let [actor, setActor] = useState('');
+  let [terms, setTerms] = useState('DEFAULT (NOT UPDATE)');
+  let [created, setCreated] = useState([]);
+
+  let newAccount = [
+    {
+      email: `${email}`,
+      password: `${password}`,
+      name: `${name}`,
+      phonenumber: `${phonenumber}`,
+      gender: `${gender}`,
+      birth: `${birth}`,
+      ci: `${ci}`,
+      actor: `${actor}`,
+      terms: `${terms}`,
+    },
+  ];
+
   let [list, setList] = useState(false);
 
   return (
-    <div style={{ margin: "5px" }}>
+    <div style={{ margin: '5px' }}>
       <h4>계정생성</h4>
       <div className="input-box">
         <label for="email">Email</label>
@@ -111,6 +134,7 @@ function Account2() {
           placeholder="e-mail"
           onChange={(event) => {
             setEmail(event.target.value);
+            console.log(email);
           }}
         ></input>
       </div>
@@ -126,21 +150,130 @@ function Account2() {
         ></input>
       </div>
       <div className="input-box">
+        <label for="name">이름</label>
+        <input
+          type="text"
+          name="name"
+          placeholder="name"
+          onChange={(event) => {
+            setName(event.target.value);
+          }}
+        ></input>
+      </div>
+      <div className="input-box">
+        <label for="phonenumber">핸드폰 번호</label>
+        <input
+          type="number"
+          name="phonenumber"
+          placeholder="010-0000-0000"
+          defaultValue="01000000000"
+          onChange={(event) => {
+            setPhonenumber(event.target.value);
+          }}
+        ></input>
+      </div>
+      <div className="input-box">
+        <label>성별</label>
+        <div>
+          <span>남자</span>
+          <input
+            name="gender"
+            type="radio"
+            value="male"
+            onChange={(event) => {
+              setGender(event.target.value);
+            }}
+          />
+          <span style={{ marginLeft: '10px' }}>여자</span>
+          <input
+            name="gender"
+            type="radio"
+            value="female"
+            onChange={(event) => {
+              setGender(event.target.value);
+            }}
+          />
+        </div>
+      </div>
+      <div className="input-box">
+        <label for="birth">생년월일</label>
+        <input
+          type="number"
+          name="birth"
+          placeholder="YYYYMMDD"
+          onChange={(event) => {
+            setBirth(event.target.value);
+          }}
+        ></input>
+      </div>
+      <div className="input-box" style={{ display: 'none' }}>
+        <label for="ci">ci</label>
+        <input
+          type="text"
+          name="ci"
+          placeholder="test"
+          defaultValue="test"
+          onChange={(event) => {
+            setCi(event.target.value);
+          }}
+        ></input>
+      </div>
+      <div className="input-box">
+        <label>Actor</label>
+        <div>
+          <span>Student</span>
+          <input
+            name="actor"
+            type="radio"
+            value="student"
+            onChange={(event) => {
+              setActor(event.target.value);
+            }}
+          />
+          <span style={{ marginLeft: '10px' }}>Teacher</span>
+          <input
+            name="actor"
+            type="radio"
+            value="teacher"
+            onChange={(event) => {
+              setActor(event.target.value);
+            }}
+          />
+        </div>
+      </div>
+      <div className="input-box" style={{ display: 'none' }}>
+        <label for="terms">terms</label>
+        <input
+          type="text"
+          name="terms"
+          placeholder="DEFAULT (NOT UPDATE)"
+          defaultValue="DEFAULT (NOT UPDATE)"
+          onChange={(event) => {
+            setTerms(event.target.value);
+          }}
+        ></input>
+      </div>
+      <div className="input-box">
         <button
-          type="submit"
+          // type="submit"
           className="register-button"
           onClick={() => {
+            let copy = [...created];
+            copy.push(newAccount);
+            console.log(created);
+            alert('gkd');
+            setCreated(copy);
             setList(true);
           }}
         >
           계정생성
         </button>
       </div>
-      {list == true ? (
-        <div>
-          {email} // {password}
-        </div>
-      ) : null}
+      {list == true
+        ? created.map((a, i) => {
+            return <div>{`${newAccount[i].email}이 생성되었습니다`}</div>;
+          })
+        : null}
     </div>
   );
 }
