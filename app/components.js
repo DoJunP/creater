@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { useSelector } from 'react-redux';
 
 // 최상단에 위치하는 네브바 컴포넌트
 function Navbars() {
@@ -104,9 +105,8 @@ const CREATE_USER = gql`
 `;
 
 function Account2() {
-  const [createUser] = useMutation(CREATE_USER);
-
   // 계정 생성통신의 인풋 데이터
+  const [createUser] = useMutation(CREATE_USER);
   const submit = async () => {
     try {
       let result = await createUser({
@@ -133,6 +133,10 @@ function Account2() {
       console.log(error);
     }
   };
+  // store에 있는 데이터 불러오기
+  let state = useSelector((state) => {
+    return state;
+  });
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -146,6 +150,7 @@ function Account2() {
   const [created, setCreated] = useState([]);
   let [list, setList] = useState(false);
 
+  // 인풋에 입력한 값들은 newAccount 변수에 담긴다
   const newAccount = {
     email: email,
     password: password,
@@ -291,7 +296,6 @@ function Account2() {
       </div>
       <div className="input-box">
         <button
-          // type="submit"
           className="register-button"
           onClick={() => {
             let copy = [...created];
@@ -314,6 +318,7 @@ function Account2() {
       <div>
         <button onClick={() => submit()}>통신버튼</button>
       </div>
+      <div>{state.user}</div>
     </div>
   );
 }

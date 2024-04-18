@@ -15,26 +15,33 @@ export default function Home() {
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <div className="container">
-          <div
-            className="big-area"
-            style={{
-              border: '2px solid black',
-              borderRadius: '5px',
-              width: '50%',
-            }}
-          >
-            <Account2 />
+        <div>
+          <div className="container">
+            <div
+              className="big-area"
+              style={{
+                border: '2px solid black',
+                borderRadius: '5px',
+                width: '50%',
+              }}
+            >
+              <Account2 />
+            </div>
+            <div
+              className="big-area"
+              style={{
+                border: '2px solid black',
+                borderRadius: '5px',
+                width: '50%',
+              }}
+            ></div>
           </div>
-          <div
-            className="big-area"
-            style={{
-              border: '2px solid black',
-              borderRadius: '5px',
-              width: '50%',
-            }}
-          ></div>
-          <div>Hello</div>
+          <div className="container">
+            <div>카드 등록 영역</div>
+          </div>
+          <div className="container">
+            <div>상품 결제 영역</div>
+          </div>
         </div>
       </ApolloProvider>
     </Provider>
