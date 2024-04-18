@@ -1,10 +1,11 @@
 'use client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Account2 } from './components';
+import { Account2, ViewAccount } from './components';
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { Provider } from 'react-redux';
 import store from '@/store';
+import { useState } from 'react';
 
 export default function Home() {
   const client = new ApolloClient({
@@ -12,6 +13,8 @@ export default function Home() {
 
     cache: new InMemoryCache(),
   });
+  let [viewList, setViewList] = useState(false);
+  let [userToken, setUserToken] = useState('');
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
@@ -25,7 +28,7 @@ export default function Home() {
                 width: '50%',
               }}
             >
-              <Account2 />
+              <Account2 setViewList={setViewList} setUserToken={setUserToken} />
             </div>
             <div
               className="big-area"
@@ -34,7 +37,9 @@ export default function Home() {
                 borderRadius: '5px',
                 width: '50%',
               }}
-            ></div>
+            >
+              {/* <ViewAccount viewList={viewList} userToken={userToken} /> */}
+            </div>
           </div>
           <div className="container">
             <div>카드 등록 영역</div>
