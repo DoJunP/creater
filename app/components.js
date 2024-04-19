@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { addAccount } from '@/store';
+import { addAccount, addToken } from '@/store';
+
+import { gql, useMutation, useQuery } from '@apollo/client';
 
 // 최상단에 위치하는 네브바 컴포넌트
 function Navbars() {
@@ -25,7 +27,7 @@ function Navbars() {
 function Account2(props) {
   // store에 있는 데이터 불러오기
   const state = useSelector((state) => {
-    return state;
+    return state.createdUser;
   });
   const dispatch = useDispatch();
 
@@ -55,6 +57,78 @@ function Account2(props) {
     ci: ci,
     actor: actor,
     terms: terms,
+  };
+
+  // 계정 생성 api 'auth_SignUpInputV2'
+  const auth_SignUpInputV2 = gql`
+    mutation Mutation($input: auth_SignUpInputV2) {
+      auth_signUpV2(input: $input)
+    }
+  `;
+  const [createUser] = useMutation(auth_SignUpInputV2);
+  const 계정생성통신 = async () => {
+    try {
+      const result = await createUser({
+        variables: {
+          input: {
+            email: email,
+            password: password,
+            name: name,
+            phoneNumber: phonenumber,
+            gender: gender,
+            birthDate: birth,
+            ci: ci,
+            actor: actor,
+            terms: terms,
+          },
+        },
+      });
+
+      if (result.data.auth_signUpV2 == true) {
+        alert('계정 생성 및 저장 완료');
+        return true;
+      }
+    } catch (error) {
+      if (error == 'ApolloError: Duplicate email') {
+        alert('중복된 이메일입니다');
+      } else {
+        alert(error);
+      }
+      return false;
+    }
+  };
+
+  // 로그인 api 'Auth_signIn'
+  const Auth_signIn = gql`
+    mutation Auth_signIn($input: auth_SignInInput!) {
+      auth_signIn(input: $input) {
+        token
+      }
+    }
+  `;
+  const [loginWithAccount] = useMutation(Auth_signIn);
+  const 로그인통신 = async () => {
+    try {
+      const result = await loginWithAccount({
+        variables: {
+          input: {
+            email: email,
+            password: password,
+          },
+        },
+      });
+      if (result != null) {
+        const token = result.data.auth_signIn.token;
+        dispatch(addToken(email, token));
+        return true;
+      }
+    } catch (error) {
+      if (error == 'ApolloError: Invalid Password') {
+        alert('비밀번호가 틀렸습니다');
+      } else {
+        alert(error);
+      }
+    }
   };
 
   return (
@@ -194,19 +268,37 @@ function Account2(props) {
       <div className="input-box">
         <button
           className="register-button"
-          onClick={() => {
+          onClick={async () => {
             dispatch(addAccount(newAccount));
-            props.setViewList(true);
-            alert('계정 생성 완료');
+
+            const 계정생성통신결과 = await 계정생성통신();
+            if (계정생성통신결과 == true) {
+              alert('작업끝');
+            }
           }}
         >
           계정생성
+        </button>
+        <button
+          className="register-button"
+          style={{ marginTop: '10px' }}
+          onClick={async () => {
+            const 로그인통신결과 = await 로그인통신();
+            if (로그인통신결과 == true) {
+              alert('로그인성공');
+            } else {
+              alert('로그인실패');
+            }
+          }}
+        >
+          로그인
         </button>
       </div>
     </div>
   );
 }
 
+// 생성된 계정 정보를 노출시키는 컴포넌트
 function ViewAccount(props) {
   let state = useSelector((state) => {
     return state;
