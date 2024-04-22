@@ -59,6 +59,7 @@ function Account2(props) {
     actor: actor,
     terms: terms,
   };
+
   // 계정 생성 api 'auth_SignUpInputV2'
   const auth_SignUpInputV2 = gql`
     mutation Mutation($input: auth_SignUpInputV2) {
@@ -131,6 +132,8 @@ function Account2(props) {
         const decodedToken = JSON.parse(jsonPayload);
 
         newAccount.token = decodedToken;
+        props.setCurrentEmail(email);
+        props.setCurrentUserId(decodedToken.id);
         return true;
       }
     } catch (error) {
@@ -140,6 +143,31 @@ function Account2(props) {
         alert(error);
       }
     }
+  };
+
+  // 카드 등록 api 'Payment_registerMainBillingCardByAdmin'
+  const Payment_registerMainBillingCardByAdmin = gql`
+    mutation Payment_registerMainBillingCardByAdmin(
+      $input: payment_RegisterMainBillingCardByAdminInput!
+    ) {
+      payment_registerMainBillingCardByAdmin(input: $input)
+    }
+  `;
+  const [addCard] = useMutation(Payment_registerMainBillingCardByAdmin);
+  const 카드등록통신 = async () => {
+    try {
+      const result = await addCardToAccount({
+        variables: {
+          input: {
+            userId: null,
+            number: null,
+            birth: null,
+            expiry: null,
+            halfPwd: null,
+          },
+        },
+      });
+    } catch (error) {}
   };
 
   return (
@@ -281,7 +309,15 @@ function Account2(props) {
           onClick={async () => {
             const 계정생성통신결과 = await 계정생성통신();
             if (계정생성통신결과 == true) {
-              alert('작업끝');
+              const 로그인통신결과 = await 로그인통신();
+              if (로그인통신결과 == true) {
+                alert('로그인성공');
+
+                dispatch(addAccount(newAccount));
+                props.setViewList(true);
+              } else {
+                alert('로그인실패');
+              }
             }
           }}
         >
@@ -323,7 +359,7 @@ function ViewAccount(props) {
       {props.viewList == true
         ? state.createdUser.map((a, i) => {
             return (
-              <div>{`${time} : ${state.createdUser[i].email}, ${state.createdUser[i].token.id}`}</div>
+              <div>{`${time} : ${state.createdUser[i].email} // ${state.createdUser[i].token.id}`}</div>
             );
           })
         : null}
@@ -331,4 +367,23 @@ function ViewAccount(props) {
   );
 }
 
-export { Navbars, Account2, ViewAccount };
+// 카드 등록을 할 수 있는 컴포넌트
+function AddCard(props) {
+  return (
+    <div className="container">
+      <div className="card-area">
+        <div>
+          <h5
+            style={{ margin: '5px' }}
+          >{`${props.currentEmail} // ${props.currentUserId}`}</h5>
+        </div>
+        <div style={{ margin: '5px' }}>
+          <button className="register-button" style={{ width: '200px' }}>
+            카드 등록
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+export { Navbars, Account2, ViewAccount, AddCard };

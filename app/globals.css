@@ -27,3 +27,17 @@ div {
   width: 100%;
   border-radius: 5px;
 }
+
+.card-area {
+  border: 2px solid black;
+  width: 100%;
+  border-radius: 5px;
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-area-button {
+  margin: 5px;
+}
