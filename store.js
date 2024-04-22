@@ -6,17 +6,6 @@ const createdUser = createSlice({
   reducers: {
     addAccount(state, action) {
       state.push(action.payload);
-      console.log('푸시푸시');
-    },
-    addToken(state, action) {
-      console.log(state);
-      const { email, token } = action.payload;
-      const 찾을계정 = state.find((a) => a.email === email);
-      console.log(찾을계정);
-      if (찾을계정) {
-        찾을계정.token = token;
-      }
-      console.log(찾을계정);
     },
   },
 });

@@ -14,7 +14,7 @@ export default function Home() {
     cache: new InMemoryCache(),
   });
   let [viewList, setViewList] = useState(false);
-  let [userToken, setUserToken] = useState('');
+
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
@@ -28,7 +28,7 @@ export default function Home() {
                 width: '50%',
               }}
             >
-              <Account2 setViewList={setViewList} setUserToken={setUserToken} />
+              <Account2 setViewList={setViewList} />
             </div>
             <div
               className="big-area"
@@ -38,7 +38,7 @@ export default function Home() {
                 width: '50%',
               }}
             >
-              {/* <ViewAccount viewList={viewList} userToken={userToken} /> */}
+              <ViewAccount viewList={viewList} />
             </div>
           </div>
           <div className="container">

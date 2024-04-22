@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { addAccount, addToken } from '@/store';
+import { addAccount } from '@/store';
 
 import { gql, useMutation, useQuery } from '@apollo/client';
 
@@ -27,8 +27,9 @@ function Navbars() {
 function Account2(props) {
   // store에 있는 데이터 불러오기
   const state = useSelector((state) => {
-    return state.createdUser;
+    return state;
   });
+
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState('');
@@ -58,7 +59,6 @@ function Account2(props) {
     actor: actor,
     terms: terms,
   };
-
   // 계정 생성 api 'auth_SignUpInputV2'
   const auth_SignUpInputV2 = gql`
     mutation Mutation($input: auth_SignUpInputV2) {
@@ -119,7 +119,18 @@ function Account2(props) {
       });
       if (result != null) {
         const token = result.data.auth_signIn.token;
-        dispatch(addToken(email, token));
+
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join(''),
+        );
+        const decodedToken = JSON.parse(jsonPayload);
+
+        newAccount.token = decodedToken;
         return true;
       }
     } catch (error) {
@@ -142,7 +153,6 @@ function Account2(props) {
           placeholder="e-mail"
           onChange={(event) => {
             setEmail(event.target.value);
-            console.log(email);
           }}
         ></input>
       </div>
@@ -269,8 +279,6 @@ function Account2(props) {
         <button
           className="register-button"
           onClick={async () => {
-            dispatch(addAccount(newAccount));
-
             const 계정생성통신결과 = await 계정생성통신();
             if (계정생성통신결과 == true) {
               alert('작업끝');
@@ -286,6 +294,9 @@ function Account2(props) {
             const 로그인통신결과 = await 로그인통신();
             if (로그인통신결과 == true) {
               alert('로그인성공');
+
+              dispatch(addAccount(newAccount));
+              props.setViewList(true);
             } else {
               alert('로그인실패');
             }
@@ -300,7 +311,7 @@ function Account2(props) {
 
 // 생성된 계정 정보를 노출시키는 컴포넌트
 function ViewAccount(props) {
-  let state = useSelector((state) => {
+  const state = useSelector((state) => {
     return state;
   });
   let date = new Date();
@@ -312,7 +323,7 @@ function ViewAccount(props) {
       {props.viewList == true
         ? state.createdUser.map((a, i) => {
             return (
-              <div>{`${time} : ${a.email} // ${props.userToken}이 생성되었습니다`}</div>
+              <div>{`${time} : ${state.createdUser[i].email}, ${state.createdUser[i].token.id}`}</div>
             );
           })
         : null}
