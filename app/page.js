@@ -1,12 +1,11 @@
 'use client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Account2, ViewAccount, AddCard } from './components';
+import { Account2, ViewAccount, AddCard, AddItem } from './components';
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { Provider } from 'react-redux';
 import store from '@/store';
 import { useState } from 'react';
-import { current } from '@reduxjs/toolkit';
 
 export default function Home() {
   const client = new ApolloClient({
@@ -53,9 +52,8 @@ export default function Home() {
           {/* 카드 등록 영역 */}
           <AddCard currentEmail={currentEmail} currentUserId={currentUserId} />
           {/* 상품 결제 영역 */}
-          <div className="container">
-            <div>상품 결제 영역</div>
-          </div>
+
+          <AddItem />
         </div>
       </ApolloProvider>
     </Provider>

@@ -145,31 +145,6 @@ function Account2(props) {
     }
   };
 
-  // 카드 등록 api 'Payment_registerMainBillingCardByAdmin'
-  const Payment_registerMainBillingCardByAdmin = gql`
-    mutation Payment_registerMainBillingCardByAdmin(
-      $input: payment_RegisterMainBillingCardByAdminInput!
-    ) {
-      payment_registerMainBillingCardByAdmin(input: $input)
-    }
-  `;
-  const [addCard] = useMutation(Payment_registerMainBillingCardByAdmin);
-  const 카드등록통신 = async () => {
-    try {
-      const result = await addCardToAccount({
-        variables: {
-          input: {
-            userId: null,
-            number: null,
-            birth: null,
-            expiry: null,
-            halfPwd: null,
-          },
-        },
-      });
-    } catch (error) {}
-  };
-
   return (
     <div style={{ margin: '5px' }}>
       <h4>계정생성</h4>
@@ -369,16 +344,121 @@ function ViewAccount(props) {
 
 // 카드 등록을 할 수 있는 컴포넌트
 function AddCard(props) {
+  const [adminToken, setAdminToken] = useState('');
+  const testCard = {
+    number: '4140-0307-9904-4953',
+    birth: '2026-12',
+    expiry: '4618800348',
+    halfPwd: '10',
+  };
+
+  // 카드 등록 api 'Payment_registerMainBillingCardByAdmin'
+  const Payment_registerMainBillingCardByAdmin = gql`
+    mutation Payment_registerMainBillingCardByAdmin(
+      $input: payment_RegisterMainBillingCardByAdminInput!
+    ) {
+      payment_registerMainBillingCardByAdmin(input: $input)
+    }
+  `;
+  const [addCard] = useMutation(Payment_registerMainBillingCardByAdmin, {
+    context: {
+      headers: {
+        authorization: `Bearer ${adminToken}`, // 원하는 토큰 설정
+      },
+    },
+  });
+  const 카드등록통신 = async () => {
+    try {
+      const result = await addCard({
+        variables: {
+          input: {
+            userId: props.currentUserId,
+            number: testCard.number, // 왜 카드 유효기간 범위를 초과했다고 나올까
+            birth: testCard.birth,
+            expiry: testCard.expiry,
+            halfPwd: testCard.halfPwd,
+          },
+        },
+      });
+      // if (result == !null) {
+      //   console.log(result);
+      //   return true;
+      // }
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // 어드민 계정 로그인 api ''
+  const Auth_signIn = gql`
+    mutation Auth_signIn($input: auth_SignInInput!) {
+      auth_signIn(input: $input) {
+        token
+      }
+    }
+  `;
+  const [loginWithAccount] = useMutation(Auth_signIn);
+  const 로그인통신 = async () => {
+    try {
+      const result = await loginWithAccount({
+        variables: {
+          input: {
+            email: 'qa.louis@seoltab.com',
+            password: 'asdfasdf',
+          },
+        },
+      });
+      if (result != null) {
+        const token = result.data.auth_signIn.token;
+        console.log(token);
+        setAdminToken(token);
+        return true;
+      }
+    } catch (error) {
+      if (error == 'ApolloError: Invalid Password') {
+        alert('비밀번호가 틀렸습니다');
+      } else {
+        alert(error);
+      }
+    }
+  };
   return (
     <div className="container">
       <div className="card-area">
         <div>
-          <h5
-            style={{ margin: '5px' }}
-          >{`${props.currentEmail} // ${props.currentUserId}`}</h5>
+          <h5 style={{ margin: '5px', fontSize: '15px' }}>
+            현재 로그인 계정 :{' '}
+            {`${props.currentEmail} / ${props.currentUserId}`}
+          </h5>
         </div>
         <div style={{ margin: '5px' }}>
-          <button className="register-button" style={{ width: '200px' }}>
+          <button
+            className="register-button"
+            style={{ width: '100px', marginRight: '3px' }}
+            onClick={async () => {
+              await 로그인통신();
+              if (로그인통신()) {
+                alert('어드민 계정 로그인 성공');
+              } else {
+                alert('어드민 계정 로그인 실패');
+              }
+            }}
+          >
+            어드민로그인
+          </button>
+          <button
+            className="register-button"
+            style={{ width: '100px' }}
+            onClick={async () => {
+              await 카드등록통신();
+              // if (카드등록통신()) {
+              //   alert(`${props.currentUserId}에 카드 등록되었습니다.`);
+              // } else {
+              //   alert('카드 등록중 에러 발생');
+              // }
+            }}
+          >
             카드 등록
           </button>
         </div>
@@ -386,4 +466,43 @@ function AddCard(props) {
     </div>
   );
 }
-export { Navbars, Account2, ViewAccount, AddCard };
+
+function AddItem() {
+  return (
+    <div className="container">
+      <div
+        style={{
+          border: '2px solid black',
+          width: '100%',
+          borderRadius: '5px',
+          height: '300px',
+          backgroundColor: 'lightgreen',
+        }}
+      >
+        <div style={{ margin: '5px' }}>
+          <h4>상품 결제</h4>
+          <div style={{ display: 'flex', width: '100%' }}>
+            <div style={{ margin: '5px' }}>
+              <label>Month</label>
+              <input name="Month" type="text" placeholder="Month"></input>
+            </div>
+            <div style={{ margin: '5px' }}>
+              <label>Week</label>
+              <input name="Week" type="text" placeholder="Week"></input>
+            </div>
+            <div style={{ margin: '5px' }}>
+              <label>Time</label>
+              <input name="Time" type="text" placeholder="Time"></input>
+            </div>
+            <div style={{ margin: '5px' }}>
+              <label>Code</label>
+              <input name="Code" type="text" placeholder="Code"></input>
+            </div>
+            <button className="register-button">결제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+export { Navbars, Account2, ViewAccount, AddCard, AddItem };
