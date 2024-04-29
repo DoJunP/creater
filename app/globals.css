@@ -45,6 +45,11 @@ div {
 .item-area {
   border: 2px solid black;
   width: 100%;
+  margin: 5px;
   border-radius: 5px;
-  margin: 10px;
+}
+
+.input-item-box {
+  margin-top: 5px;
+  margin-right: 5px;
 }

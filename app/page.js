@@ -53,7 +53,7 @@ export default function Home() {
           <AddCard currentEmail={currentEmail} currentUserId={currentUserId} />
           {/* 상품 결제 영역 */}
 
-          <AddItem />
+          <AddItem currentUserId={currentUserId} />
         </div>
       </ApolloProvider>
     </Provider>

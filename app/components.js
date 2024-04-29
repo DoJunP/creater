@@ -347,8 +347,8 @@ function AddCard(props) {
   const [adminToken, setAdminToken] = useState('');
   const testCard = {
     number: '4140-0307-9904-4953',
-    birth: '2026-12',
-    expiry: '4618800348',
+    birth: '4618800348',
+    expiry: '2026-12',
     halfPwd: '10',
   };
 
@@ -467,38 +467,135 @@ function AddCard(props) {
   );
 }
 
-function AddItem() {
+function AddItem(props) {
+  const [month, setMonth] = useState('');
+  const [week, setWeek] = useState('');
+  const [minute, setMinute] = useState('');
+  const [subjectCode, setSubjectCode] = useState('');
+  const paymentInfo = {
+    userId: props.currentUserId,
+    installmentPeriod: null,
+    lectures: [
+      {
+        month: month,
+        week: week,
+        minute: minute,
+        subjectCode: subjectCode,
+      },
+    ],
+  };
+
+  const Payment_buyProductsByAdminV3 = gql`
+    mutation Payment_buyProductsByAdminV3(
+      $input: payment_BuyProductsByAdminV3Input!
+    ) {
+      payment_buyProductsByAdminV3(input: $input) {
+        userId
+      }
+    }
+  `;
+  const [payItem] = useMutation(Payment_buyProductsByAdminV3);
+  const 결제통신 = async () => {
+    try {
+      const result = await payItem({
+        variables: {
+          input: {
+            userId: props.currentUserId,
+            installmentPeriod: '',
+            lectures: [
+              {
+                month: '',
+                week: '',
+                minute: '',
+                subjectCode: '',
+              },
+            ],
+          },
+        },
+      });
+      return result;
+    } catch {}
+  };
+
   return (
     <div className="container">
-      <div
-        style={{
-          border: '2px solid black',
-          width: '100%',
-          borderRadius: '5px',
-          height: '300px',
-          backgroundColor: 'lightgreen',
-        }}
-      >
+      <div className="item-area">
         <div style={{ margin: '5px' }}>
-          <h4>상품 결제</h4>
-          <div style={{ display: 'flex', width: '100%' }}>
-            <div style={{ margin: '5px' }}>
-              <label>Month</label>
-              <input name="Month" type="text" placeholder="Month"></input>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <h4>상품 결제</h4>
             </div>
-            <div style={{ margin: '5px' }}>
-              <label>Week</label>
-              <input name="Week" type="text" placeholder="Week"></input>
+            <div
+              style={{
+                width: '10%',
+              }}
+            >
+              <button
+                className="register-button"
+                onClick={() => {
+                  console.log(paymentInfo);
+                }}
+              >
+                상품 결제
+              </button>
             </div>
-            <div style={{ margin: '5px' }}>
-              <label>Time</label>
-              <input name="Time" type="text" placeholder="Time"></input>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+            }}
+          >
+            <div className="input-item-box">
+              <label htmlFor="month">Month</label>
+              <input
+                type="text"
+                name="month"
+                placeholder="Month"
+                onChange={(event) => {
+                  setMonth(event.target.value);
+                }}
+              ></input>
             </div>
-            <div style={{ margin: '5px' }}>
-              <label>Code</label>
-              <input name="Code" type="text" placeholder="Code"></input>
+            <div className="input-item-box">
+              <label htmlFor="week">Week</label>
+              <input
+                type="text"
+                name="week"
+                placeholder="Week"
+                onChange={(event) => {
+                  setWeek(event.target.value);
+                }}
+              ></input>
             </div>
-            <button className="register-button">결제</button>
+            <div className="input-item-box">
+              <label htmlFor="minute">Time</label>
+              <input
+                type="text"
+                name="minute"
+                placeholder="Time"
+                onChange={(event) => {
+                  setMinute(event.target.value);
+                }}
+              ></input>
+            </div>
+            <div className="input-item-box">
+              <label htmlFor="subjectCode">Code</label>
+              <input
+                type="text"
+                name="subjectCode"
+                placeholder="Code"
+                onChange={(event) => {
+                  setSubjectCode(event.target.value);
+                }}
+              ></input>
+            </div>
           </div>
         </div>
       </div>
