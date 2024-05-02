@@ -1,6 +1,6 @@
 'use client';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -84,18 +84,9 @@ function Account2(props) {
           },
         },
       });
-
-      if (result.data.auth_signUpV2 == true) {
-        alert('계정 생성 및 저장 완료');
-        return true;
-      }
+      return result;
     } catch (error) {
-      if (error == 'ApolloError: Duplicate email') {
-        alert('중복된 이메일입니다');
-      } else {
-        alert(error);
-      }
-      return false;
+      console.log(error);
     }
   };
 
@@ -307,7 +298,10 @@ function Account2(props) {
           className="register-button"
           onClick={async () => {
             const 계정생성통신결과 = await 계정생성통신();
-            if (계정생성통신결과 == true) {
+
+            if (계정생성통신결과.data != null) {
+              alert('계정 생성 완료');
+
               const 로그인통신결과 = await 로그인통신();
               if (로그인통신결과 == true) {
                 alert('로그인성공');
@@ -317,6 +311,8 @@ function Account2(props) {
               } else {
                 alert('로그인실패');
               }
+            } else if (계정생성통신결과.data == null) {
+              alert(계정생성통신결과);
             }
           }}
         >
@@ -327,6 +323,7 @@ function Account2(props) {
           style={{ marginTop: '10px' }}
           onClick={async () => {
             const 로그인통신결과 = await 로그인통신();
+
             if (로그인통신결과 == true) {
               alert('로그인성공');
 
@@ -349,8 +346,6 @@ function ViewAccount(props) {
   const state = useSelector((state) => {
     return state;
   });
-  let date = new Date();
-  let time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
   return (
     <div style={{ margin: '5px' }}>
@@ -358,7 +353,7 @@ function ViewAccount(props) {
       {props.viewList == true
         ? state.createdUser.map((a, i) => {
             return (
-              <div>{`${time} : ${state.createdUser[i].email} // ${state.createdUser[i].token.id}`}</div>
+              <div>{`${state.createdUser[i].email} // ${state.createdUser[i].token.id} // ${state.createdUser[i].actor}`}</div>
             );
           })
         : null}
@@ -437,6 +432,7 @@ function AddCard(props) {
         const token = result.data.auth_signIn.token;
         console.log(token);
         setAdminToken(token);
+
         return true;
       }
     } catch (error) {
@@ -447,6 +443,7 @@ function AddCard(props) {
       }
     }
   };
+
   return (
     <div className="container">
       <div className="card-area">
