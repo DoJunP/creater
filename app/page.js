@@ -8,8 +8,9 @@ import store from '@/store';
 import { useState } from 'react';
 
 export default function Home() {
+  const [env, setEnv] = useState('');
   const client = new ApolloClient({
-    uri: 'https://api.dev.gateway.seoltab.com/graphql',
+    uri: `https://api.${env}.gateway.seoltab.com/graphql`,
 
     cache: new InMemoryCache(),
   });
@@ -35,6 +36,7 @@ export default function Home() {
                 setViewList={setViewList}
                 setCurrentEmail={setCurrentEmail}
                 setCurrentUserId={setCurrentUserId}
+                setEnv={setEnv}
               />
             </div>
             {/* 계정 목록 영역 */}

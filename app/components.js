@@ -120,6 +120,7 @@ function Account2(props) {
       });
       if (result != null) {
         const token = result.data.auth_signIn.token;
+        console.log(token);
 
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -148,6 +149,29 @@ function Account2(props) {
   return (
     <div style={{ margin: '5px' }}>
       <h4>계정생성</h4>
+      <div className="input-box">
+        <label>Env</label>
+        <div>
+          <span>dev</span>
+          <input
+            name="env"
+            type="radio"
+            value="dev"
+            onChange={(event) => {
+              props.setEnv(event.target.value);
+            }}
+          />
+          <span style={{ marginLeft: '10px' }}>stage</span>
+          <input
+            name="env"
+            type="radio"
+            value="stage"
+            onChange={(event) => {
+              props.setEnv(event.target.value);
+            }}
+          />
+        </div>
+      </div>
       <div className="input-box">
         <label for="email">Email</label>
         <input
