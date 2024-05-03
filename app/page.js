@@ -1,7 +1,8 @@
 'use client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Account2, ViewAccount, AddCard, AddItem } from './components';
+import { Account2, ViewAccount, AddCard } from './components';
+import { AddItem } from './AddItem';
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { Provider } from 'react-redux';
 import store from '@/store';
@@ -17,6 +18,7 @@ export default function Home() {
   let [viewList, setViewList] = useState(false);
   const [currentEmail, setCurrentEmail] = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
+  const [adminToken, setAdminToken] = useState('');
 
   return (
     <Provider store={store}>
@@ -52,10 +54,15 @@ export default function Home() {
             </div>
           </div>
           {/* 카드 등록 영역 */}
-          <AddCard currentEmail={currentEmail} currentUserId={currentUserId} />
+          <AddCard
+            currentEmail={currentEmail}
+            currentUserId={currentUserId}
+            adminToken={adminToken}
+            setAdminToken={setAdminToken}
+          />
           {/* 상품 결제 영역 */}
 
-          <AddItem currentUserId={currentUserId} />
+          <AddItem currentUserId={currentUserId} adminToken={adminToken} />
         </div>
       </ApolloProvider>
     </Provider>

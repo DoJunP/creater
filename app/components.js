@@ -363,7 +363,6 @@ function ViewAccount(props) {
 
 // 카드 등록을 할 수 있는 컴포넌트
 function AddCard(props) {
-  const [adminToken, setAdminToken] = useState('');
   const testCard = {
     number: '4140-0307-9904-4953',
     birth: '4618800348',
@@ -382,7 +381,7 @@ function AddCard(props) {
   const [addCard] = useMutation(Payment_registerMainBillingCardByAdmin, {
     context: {
       headers: {
-        authorization: `Bearer ${adminToken}`, // 원하는 토큰 설정
+        authorization: `Bearer ${props.adminToken}`, // 원하는 토큰 설정
       },
     },
   });
@@ -399,11 +398,7 @@ function AddCard(props) {
           },
         },
       });
-      // if (result == !null) {
-      //   console.log(result);
-      //   return true;
-      // }
-      console.log(result);
+      return result;
     } catch (error) {
       console.log(error);
     }
@@ -431,7 +426,7 @@ function AddCard(props) {
       if (result != null) {
         const token = result.data.auth_signIn.token;
         console.log(token);
-        setAdminToken(token);
+        props.setAdminToken(token);
 
         return true;
       }
@@ -472,12 +467,12 @@ function AddCard(props) {
             className="register-button"
             style={{ width: '100px' }}
             onClick={async () => {
-              await 카드등록통신();
-              // if (카드등록통신()) {
-              //   alert(`${props.currentUserId}에 카드 등록되었습니다.`);
-              // } else {
-              //   alert('카드 등록중 에러 발생');
-              // }
+              const 카드등록통신결과 = await 카드등록통신();
+              if (카드등록통신결과.data != null) {
+                alert('카드 등록 성공');
+              } else if (카드등록통신결과.data == null) {
+                alert(카드등록통신결과);
+              }
             }}
           >
             카드 등록
@@ -488,139 +483,4 @@ function AddCard(props) {
   );
 }
 
-function AddItem(props) {
-  const [month, setMonth] = useState('');
-  const [week, setWeek] = useState('');
-  const [minute, setMinute] = useState('');
-  const [subjectCode, setSubjectCode] = useState('');
-  const paymentInfo = {
-    userId: props.currentUserId,
-    installmentPeriod: null,
-    lectures: [
-      {
-        month: month,
-        week: week,
-        minute: minute,
-        subjectCode: subjectCode,
-      },
-    ],
-  };
-
-  const Payment_buyProductsByAdminV3 = gql`
-    mutation Payment_buyProductsByAdminV3(
-      $input: payment_BuyProductsByAdminV3Input!
-    ) {
-      payment_buyProductsByAdminV3(input: $input) {
-        userId
-      }
-    }
-  `;
-  const [payItem] = useMutation(Payment_buyProductsByAdminV3);
-  const 결제통신 = async () => {
-    try {
-      const result = await payItem({
-        variables: {
-          input: {
-            userId: props.currentUserId,
-            installmentPeriod: '',
-            lectures: [
-              {
-                month: '',
-                week: '',
-                minute: '',
-                subjectCode: '',
-              },
-            ],
-          },
-        },
-      });
-      return result;
-    } catch {}
-  };
-
-  return (
-    <div className="container">
-      <div className="item-area">
-        <div style={{ margin: '5px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <h4>상품 결제</h4>
-            </div>
-            <div
-              style={{
-                width: '10%',
-              }}
-            >
-              <button
-                className="register-button"
-                onClick={() => {
-                  console.log(paymentInfo);
-                }}
-              >
-                상품 결제
-              </button>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-            }}
-          >
-            <div className="input-item-box">
-              <label htmlFor="month">Month</label>
-              <input
-                type="text"
-                name="month"
-                placeholder="Month"
-                onChange={(event) => {
-                  setMonth(event.target.value);
-                }}
-              ></input>
-            </div>
-            <div className="input-item-box">
-              <label htmlFor="week">Week</label>
-              <input
-                type="text"
-                name="week"
-                placeholder="Week"
-                onChange={(event) => {
-                  setWeek(event.target.value);
-                }}
-              ></input>
-            </div>
-            <div className="input-item-box">
-              <label htmlFor="minute">Time</label>
-              <input
-                type="text"
-                name="minute"
-                placeholder="Time"
-                onChange={(event) => {
-                  setMinute(event.target.value);
-                }}
-              ></input>
-            </div>
-            <div className="input-item-box">
-              <label htmlFor="subjectCode">Code</label>
-              <input
-                type="text"
-                name="subjectCode"
-                placeholder="Code"
-                onChange={(event) => {
-                  setSubjectCode(event.target.value);
-                }}
-              ></input>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-export { Navbars, Account2, ViewAccount, AddCard, AddItem };
+export { Navbars, Account2, ViewAccount, AddCard };
