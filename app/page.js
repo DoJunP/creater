@@ -11,7 +11,7 @@ import { useState } from 'react';
 export default function Home() {
   const [env, setEnv] = useState('');
   const client = new ApolloClient({
-    uri: `https://api.${env}.gateway.seoltab.com/graphql`,
+    uri: `https://api${env}.gateway.seoltab.com/graphql`,
 
     cache: new InMemoryCache(),
   });
