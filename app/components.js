@@ -161,6 +161,15 @@ function Account2(props) {
               props.setEnv(event.target.value);
             }}
           />
+          <span>prod</span>
+          <input
+            name="env"
+            type="radio"
+            value="prod"
+            onChange={(event) => {
+              props.setEnv(event.target.value);
+            }}
+          />
         </div>
       </div>
       <div className="input-box">
