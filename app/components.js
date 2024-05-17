@@ -161,7 +161,7 @@ function Account2(props) {
               props.setEnv(event.target.value);
             }}
           />
-          <span>prod</span>
+          <span style={{ marginLeft: '10px' }}>prod</span>
           <input
             name="env"
             type="radio"
